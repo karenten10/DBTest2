@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.5" />
     <PackageReference Include="Syncfusion.Blazor" Version="19.4.0.43" />
   </ItemGroup>
@@ -14,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Database.Models\Database.Models.csproj" />
     <ProjectReference Include="..\InspectionShare\InspectionShare.csproj" />
+    <ProjectReference Include="..\xfPatrolDto\xfPatrolDto.csproj" />
   </ItemGroup>
 
 </Project>

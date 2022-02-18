@@ -16,6 +16,15 @@ using Syncfusion.Blazor;
 using InspectionBlazor.RazorModels;
 using InspectionBlazor.Helpers;
 using Database.Models.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Http.Features;
+using xfPatrolDto.Dtos;
+using InspectionShare.Helpers;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace DBTest
 {
@@ -32,6 +41,57 @@ namespace DBTest
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            #region 加入使用 Cookie & JWT 認證需要的宣告
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
+            });
+            services.AddAuthentication(
+                CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["Tokens:ValidIssuer"],
+                        ValidAudience = Configuration["Tokens:ValidAudience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:IssuerSigningKey"])),
+                        RequireExpirationTime = true,
+                        ClockSkew = TimeSpan.Zero,
+                    };
+                    options.Events = new JwtBearerEvents()
+                    {
+                        OnAuthenticationFailed = async context =>
+                        {
+                            context.Response.StatusCode = 401;
+                            context.Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = context.Exception.Message;
+                            APIResult apiResult = JWTTokenFailHelper.GetFailResult(context.Exception);
+
+                            context.Response.ContentType = "application/json";
+                            await context.Response.WriteAsync(JsonConvert.SerializeObject(apiResult));
+                            return;
+                        },
+                        OnChallenge = context =>
+                        {
+                            //context.HandleResponse();
+                            return Task.CompletedTask;
+                        },
+                        OnTokenValidated = context =>
+                        {
+                            Console.WriteLine("OnTokenValidated: " +
+                                context.SecurityToken);
+                            return Task.CompletedTask;
+                        }
+
+                    };
+                });
+            #endregion
+
             services.AddControllers();
 
 
@@ -176,6 +236,15 @@ namespace DBTest
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            #region 指定要使用 Cookie & 使用者認證的中介軟體
+            app.UseCookiePolicy();
+            app.UseAuthentication();
+            #endregion
+
+            #region 指定使用授權檢查的中介軟體
+            app.UseAuthorization();
+            #endregion
 
             app.UseEndpoints(endpoints =>
             {

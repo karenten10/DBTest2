@@ -1,4 +1,19 @@
 ﻿@inherits LayoutComponentBase
+@using Syncfusion.Blazor.Navigations
+
+@inject NavigationManager NavigationManager
+
+@using InspectionBlazor.Services
+@using Database.Models.Models
+@using InspectionBlazor.Helpers
+@using InspectionShare.Helpers
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Microsoft.AspNetCore.Authorization
+@inject MenuListService menuListService
+@inject PersonService personService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="page">
     <div class="sidebar">
@@ -7,6 +22,7 @@
 
     <div class="main">
         <div class="top-row px-4">
+            <div>@UserName，您好，歡迎使用</div>
             <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
         </div>
 
@@ -15,3 +31,20 @@
         </div>
     </div>
 </div>
+
+@code {
+
+    public bool isLogin { get; set; }
+
+    public string UserName { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        UserHelper userHelper = new UserHelper(AuthenticationStateProvider);
+        (int UserId, string Account, string userName) = await userHelper.GetUserInformation2Async();
+
+        UserName = userName;
+
+    }
+}
