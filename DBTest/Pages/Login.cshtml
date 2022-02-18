@@ -25,9 +25,9 @@
 <body style="min-width: 350px; min-height: 700px; background: #e9ecf1;">
     <div class="limiter">
         <div class="container-login100">
-            <div style="z-index: 0; margin-top: 20px; text-align: center;">
+            @*<div style="z-index: 0; margin-top: 20px; text-align: center;">
                 <img src="images/Login_Title.png" style="max-height: 100px; max-width: 330px; margin-top: -18px; " alt="IMG">
-            </div>
+            </div>*@
             <div class="title-out">
                 <div style="z-index: 0;text-align: center;margin-bottom: 26px;margin-top: 20px;">
                     <lable style="color: #383d41;font-size: 28px;font-family: Microsoft JhengHei;font-weight: bold;">
@@ -58,7 +58,7 @@
                                 <i class="fa fa-key" aria-hidden="true"></i>
                             </span>
                         </div>
-                        <label class="myLabel">驗證碼</label>
+                        <!--<label class="myLabel">驗證碼</label>
                         <div class="wrap-input100 validate-input" data-validate="ValidateCode is required">
                             <input class="input100" type="text" asp-for="inputValidateCode" value="@Model.inputValidateCode" placeholder="請輸入驗證碼"
                                    style="outline: none !important; border-style: solid !important; border-color: #eaeaeb !important;"/>
@@ -66,12 +66,12 @@
                                 <i class="fa fa-lock" aria-hidden="true"></i>
                             </span>
                             <span class="symbol-input100" style="pointer-events: none; ">
-                                <img style="margin-left: 73%; border-style: ridge;" id="code" src='data:image/jpeg;base64, @Model.base64ValidateCode' />
+                                <img style="margin-left: 73%; border-style: ridge;" id="code" src='data:image/jpeg;base64, @Model.base64ValidateCode' />-->
                                 @*<a asp-page-handler="RefreshCode" style="pointer-events: fill;">
                                     <i class="fa fa-refresh" aria-hidden="true" style="margin-left: 18px; margin-top: 9px;"></i>
                                 </a>*@
-                            </span>
-                        </div>
+                            <!--</span>
+                        </div>-->
                         <div class="alert-msg">@Model.Msg</div>
                         <input style="width:1px;height:1px;visibility:hidden" type="text" asp-for="checkCode" value="@Model.checkValidateCode" placeholder="請輸入驗證碼" />
 
@@ -123,6 +123,8 @@
         padding-left: 30px;
         margin-bottom: 40px;
         width: 350px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .login100-pic {
@@ -224,5 +226,13 @@
         color: slategray;
         font-weight: bold;
         font-size: 14px;
+    }
+
+    .container-login100-form-btn {
+        text-align: center;
+    }
+
+    .input100 {
+        width: 290px;
     }
 </style>

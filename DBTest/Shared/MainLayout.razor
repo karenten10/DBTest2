@@ -22,7 +22,10 @@
 
     <div class="main">
         <div class="top-row px-4">
-            <div>@UserName，您好，歡迎使用</div>
+            @if (isLogin)
+            {
+                <div>@UserName，您好，歡迎使用</div>
+            }
             <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
         </div>
 
@@ -45,6 +48,8 @@
         (int UserId, string Account, string userName) = await userHelper.GetUserInformation2Async();
 
         UserName = userName;
+
+        isLogin = !string.IsNullOrEmpty(UserName) ? true : false;
 
     }
 }
