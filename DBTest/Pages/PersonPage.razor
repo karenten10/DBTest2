@@ -1,0 +1,9 @@
+﻿@page "/Person"
+@attribute [Authorize(Roles = "Administrator,Person")]
+@using DBTest.Components.Views
+@using InspectionShare.Helpers
+
+<h1>@MenuHelper.人員資料設定.Name</h1>
+
+<PersonView />
+<div style="height:100px"></div>

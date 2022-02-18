@@ -1,0 +1,9 @@
+﻿@page "/JobTitle"
+@attribute [Authorize(Roles = "Administrator,JobTitle")]
+@using DBTest.Components.Views
+@using InspectionShare.Helpers
+
+<h1>@MenuHelper.職稱設定.Name</h1>
+
+<JobTitleView />
+<div style="height:100px"></div>

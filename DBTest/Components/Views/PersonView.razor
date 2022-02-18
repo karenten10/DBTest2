@@ -1,0 +1,415 @@
+﻿@using System.Threading
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Calendars
+@using DBTest.Adapters
+@using InspectionBlazor.Services
+@using Database.Models.Models
+@using AutoMapper
+@using InspectionBlazor.AdapterModels
+@using InspectionBlazor.RazorModels
+@using InspectionBlazor.Interfaces
+@using InspectionBlazor.Helpers
+@using InspectionBlazor.DataModels
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Navigations
+@using InspectionShare.Helpers
+@inject PersonRazorModel RazorModel
+@implements IRazorPage
+@inject IJSRuntime JSRuntime
+
+@{
+    if (RazorModel.IsReadyToShowGrid)
+    {
+        <div class="form-group col" style="margin: 10px 0px 10px -14px;">
+            <label class="control-label" style="font-weight: bold;">製作報表：</label>
+            <SfDropDownList TValue="string" TItem="string"
+                            Placeholder="請選擇" DataSource="@RazorModel.listYears" PopupWidth="auto" Width="100px">
+                <DropDownListFieldSettings Value="Title" Text="Title"></DropDownListFieldSettings>
+                <DropDownListEvents TValue="string" TItem="string" ValueChange="@RazorModel.SelectedYearChanged"></DropDownListEvents>
+            </SfDropDownList>
+            <label class="control-label" style="font-weight: bold;">年</label>
+            <SfDropDownList TValue="string" TItem="string"
+                            Placeholder="請選擇" DataSource="@RazorModel.listMonths" PopupWidth="auto" Width="100px">
+                <DropDownListFieldSettings Value="Title" Text="Title"></DropDownListFieldSettings>
+                <DropDownListEvents TValue="string" TItem="string" ValueChange="@RazorModel.SelectedMonthChanged"></DropDownListEvents>
+            </SfDropDownList>
+            <label class="control-label" style="font-weight: bold; margin-right: 12px;">月</label>
+            <SfButton Content="人員名冊表" @onclick="@(()=> { GetRegisterReport("1"); })" />
+            <SfButton Content="人員電話地址表" @onclick="@(()=> { GetRegisterReport("2"); })" />
+        </div>
+
+        <SfGrid @ref="Grid" TValue="PersonAdapterModel" AllowPaging="true"
+                Toolbar="@(new List<string>() { "新增", "Search" })">
+            <SfDataManager Adaptor="Adaptors.CustomAdaptor">
+                <PersonAdapter></PersonAdapter>
+            </SfDataManager>
+            <GridEvents CommandClicked="RazorModel.OnCommandClickedAsync" TValue="PersonAdapterModel"
+                        OnToolbarClick="RazorModel.ToolbarClickHandlerAsync"
+                        RowSelected="RowSelectHandler" RowDeselected="RowDeselectHandler"></GridEvents>
+            <GridPageSettings PageSize="@MagicHelper.DefalutPageSize" />
+            <GridSearchSettings Fields=@RazorModel.InitSearch Operator=Syncfusion.Blazor.Operator.Contains IgnoreCase="true"></GridSearchSettings>
+            <GridColumns>
+                <GridColumn Field=@nameof(PersonAdapterModel.Name) HeaderText="名稱" Width="150px"></GridColumn>
+                <GridColumn Field=@nameof(PersonAdapterModel.Account) HeaderText="帳號" Width="100px"></GridColumn>
+                <GridColumn Field=@nameof(PersonAdapterModel.JobTitleName) HeaderText="職稱" Width="120px"></GridColumn>
+                <GridColumn Field=@nameof(PersonAdapterModel.PersonDepartmentName) HeaderText="課別" Width="150px"></GridColumn>
+                <GridColumn Field=@nameof(PersonAdapterModel.Email) HeaderText="E-mail" Width="200px"></GridColumn>
+                <GridColumn Field=@nameof(PersonAdapterModel.StatusName) HeaderText="@MagicHelper.StatusTitle" Width="100px">
+                    <Template>
+                        @{
+                            var currentRec = (context as PersonAdapterModel);
+                            bool Enabled = ShareMagicHelper.系統管理員帳號.Contains(currentRec.Account) ? false : true;
+
+                            if (Enabled)
+                            {
+                                @currentRec.StatusName
+                                if (currentRec.Status == @MagicHelper.StatusNoCode)
+                                {
+                                    <span class="oi oi-play-circle mx-2 text-success" @onclick="x => RazorModel.DisableIt(currentRec)" />
+                                }
+                                else
+                                {
+                                    <span class="oi oi-media-stop mx-2 text-danger" @onclick="x => RazorModel.EnableIt(currentRec)" />
+                                }
+                            }
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="命令" Width="100px" TextAlign="@TextAlign.Center">
+                    <GridCommandColumns>
+                        <GridCommandColumn ButtonOption="@(new CommandButtonOptions() { Content = "修改", CssClass = "e-flat" })"></GridCommandColumn>
+                    </GridCommandColumns>
+                </GridColumn>
+            </GridColumns>
+        </SfGrid>
+    }
+    else
+    {
+        <div class="form-row">
+            <div class="form-group col">
+                <label class="control-label" style="font-weight: bold;">讀取資料中，請稍後</label>
+            </div>
+        </div>
+    }
+}
+
+<SfDialog @bind-Visible="@RazorModel.isVisibleRecord" ShowCloseIcon="true" IsModal="true"
+          Width="600px" Height="80%">
+    <DialogTemplates>
+        <Header>@RazorModel.DialogTitle</Header>
+        <Content>
+            <EditForm Model="@RazorModel.CurrentRecord" OnValidSubmit="RazorModel.HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <InputWatcher EditContextActionChanged="@RazorModel.OnEditContestChanged" />
+                <div>
+                    @{
+                        bool Enabled = ShareMagicHelper.系統管理員帳號.Contains(RazorModel.CurrentRecord.Account) ? false : true;
+                    }
+                    <SfTab>
+                        <TabItems>
+                            <TabItem>
+                                <ChildContent>
+                                    <TabHeader Text="公司基本資料" />
+                                </ChildContent>
+                                <ContentTemplate>
+                                    <br>
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">姓名</label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.Name"></SfTextBox>
+                                            <ValidationMessage For="@(() => RazorModel.CurrentRecord.Name)" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">帳號</label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.Account" Enabled="@Enabled"></SfTextBox>
+                                            <ValidationMessage For="@(() => RazorModel.CurrentRecord.Account)" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">密碼</label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.PasswordPlainText" Type="InputType.Password"></SfTextBox>
+                                            <ValidationMessage For="@(() => RazorModel.CurrentRecord.PasswordPlainText)" />
+                                        </div>
+                                    </div>
+
+                                    @{
+                                        if (Enabled)
+                                        {
+                                            <div class="form-row">
+                                                <div class="form-group col">
+                                                    <label class="control-label" style="font-weight: bold;">部門</label>
+                                                    <SfMultiSelect TValue="long?[]" TItem="Department" Mode="@VisualMode.Default" Placeholder="請選擇"
+                                                                   DataSource="RazorModel.department"
+                                                                   @bind-Value="RazorModel.CurrentRecord.PersonDepartmentId">
+                                                        <MultiSelectFieldSettings Text="DepartmentName" Value="Id"></MultiSelectFieldSettings>
+                                                    </SfMultiSelect>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-row">
+                                                <div class="form-group col">
+                                                    <label class="control-label" style="font-weight: bold;">職稱</label>
+                                                    <SfAutoComplete TValue="int?" @ref="@RazorModel.JobTitleIdAutoObj" TItem="JobTitle" Placeholder="輸入職稱"
+                                                                    DataSource="@RazorModel.listJobTitle"
+                                                                    ShowPopupButton="true"
+                                                                    @bind-Value="RazorModel.CurrentRecord.JobTitleId"
+                                                                    Width="100%">
+                                                        <AutoCompleteFieldSettings Text="Name" Value="Id"></AutoCompleteFieldSettings>
+                                                        <AutoCompleteEvents TValue="int?" TItem="JobTitle" Filtering="@RazorModel.JobTitleIdOnFilter"></AutoCompleteEvents>
+                                                    </SfAutoComplete>
+                                                    <ValidationMessage For="@(() => RazorModel.CurrentRecord.JobTitleId)" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-row">
+                                                <div class="form-group col">
+                                                    <label class="control-label" style="font-weight: bold;">上級主管</label>
+                                                    <SfMultiSelect TValue="int?[]" TItem="PersonDepartmentForPersonView" Mode="@VisualMode.Default" Placeholder="請選擇"
+                                                                   DataSource="RazorModel.person"
+                                                                   @bind-Value="RazorModel.CurrentRecord.PersonManagerId" MaximumSelectionLength="10">
+                                                        <MultiSelectFieldSettings Text="PersonName" Value="PersonId" GroupBy="DepartmentName"></MultiSelectFieldSettings>
+                                                    </SfMultiSelect>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-row">
+                                                <div class="form-group col">
+                                                    <label class="control-label" style="font-weight: bold;">功能表權限</label>
+                                                    <SfDropDownList TValue="long?" Placeholder="請選擇" TItem="AuthorityAdapterModel"
+                                                                    @bind-Value="RazorModel.CurrentRecord.AuthorityId"
+                                                                    DataSource="RazorModel.listAuthority">
+                                                        <DropDownListFieldSettings Text="Name" Value="Id"></DropDownListFieldSettings>
+                                                    </SfDropDownList>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-row">
+                                                <div class="form-group col">
+                                                    <label class="control-label" style="font-weight: bold;">承攬商代號</label>
+                                                    <SfTextBox @bind-Value="RazorModel.CurrentRecord.ContractorName"></SfTextBox>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-row">
+                                                <div class="form-group col">
+                                                    <label class="control-label" style="font-weight: bold;">@MagicHelper.StatusTitle</label>
+                                                    <SfDropDownList TValue="string" Placeholder="請選擇" TItem="StatusSelectModel"
+                                                                    @bind-Value="RazorModel.CurrentRecord.Status"
+                                                                    DataSource="@MagicHelper.StatusList">
+                                                        <DropDownListFieldSettings Text="Title" Value="Code"></DropDownListFieldSettings>
+                                                    </SfDropDownList>
+                                                    <ValidationMessage For="@(() => RazorModel.CurrentRecord.Status)" />
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </ContentTemplate>
+                            </TabItem>
+                            <TabItem Visible="@Enabled">
+                                <ChildContent>
+                                    <TabHeader Text="個人資料與聯絡方式" />
+                                </ChildContent>
+                                <ContentTemplate>
+                                    <br>
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">E-mail</label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.Email"></SfTextBox>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">聯絡電話</label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.Mobile"></SfTextBox>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">出生年月日</label>
+                                            <SfDatePicker TValue="DateTime?" @bind-Value="RazorModel.CurrentRecord.BirthDate"
+                                                          CssClass="inlinecss" Format="yyyy/MM/dd" Placeholder="請選擇出生年月日" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">身分證字號</label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.IdentityCardNumber"></SfTextBox>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">住址</label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.Address"></SfTextBox>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">
+                                                在院工作性質及地點(或區域)
+                                            </label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.WorkingType"></SfTextBox>
+                                        </div>
+                                    </div>
+                                </ContentTemplate>
+                            </TabItem>
+                            <TabItem Visible="@Enabled">
+                                <ChildContent>
+                                    <TabHeader Text="學經歷與資格證照" />
+                                </ChildContent>
+                                <ContentTemplate>
+                                    <br>
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">
+                                                須具備之學歷、證照及經驗等基本資格條件
+                                            </label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.Qualifications"></SfTextBox>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">
+                                                學歷
+                                            </label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.Education"></SfTextBox>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">
+                                                科目
+                                            </label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.SchoolDepartment"></SfTextBox>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">
+                                                經歷
+                                            </label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.Experience"></SfTextBox>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">
+                                                證照
+                                            </label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.License"></SfTextBox>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label class="control-label" style="font-weight: bold;">
+                                                備註
+                                            </label>
+                                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.Memo" Multiline="true"></SfTextBox>
+                                        </div>
+                                    </div>
+                                </ContentTemplate>
+                            </TabItem>
+                        </TabItems>
+                    </SfTab>
+                </div>
+            </EditForm>
+        </Content>
+        <FooterTemplate>
+            <div>
+                <label style="float: left; margin-right: 15px; margin-top: 10px;">@RazorModel.CurrentRecord.ShowLastUpdateTime</label>
+                <label style="float: left; margin-top: 10px;">@RazorModel.CurrentRecord.ShowLastUpdateUser</label>
+                <button type="submit" class="btn btn-primary" @onclick="RazorModel.OnSaveAsync">儲存</button>
+                <button class="btn btn-secondary" @onclick="RazorModel.OnCancel">取消</button>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogPositionData X="center" Y="center"></DialogPositionData>
+</SfDialog>
+
+<MessageBox Height="@RazorModel.MessageBox.Height" Width="@RazorModel.MessageBox.Width"
+            IsVisible="@RazorModel.MessageBox.IsVisible"
+            Title="@RazorModel.MessageBox.Title" Message="@RazorModel.MessageBox.Body"
+            Callback="x=>RazorModel.MessageBox.Hidden()" />
+
+<ConfirmBox Height="@RazorModel.ConfirmMessageBox.Height" Width="@RazorModel.ConfirmMessageBox.Width"
+            IsVisible="@RazorModel.ConfirmMessageBox.IsVisible"
+            Title="@RazorModel.ConfirmMessageBox.Title" Message="@RazorModel.ConfirmMessageBox.Body"
+            Callback="x=>RazorModel.RemoveThisRecord(x)" />
+
+<DBTest.Components.DialogBackground />
+
+@code{
+    SfGrid<PersonAdapterModel> Grid;
+    [Parameter]
+    public EventCallback<PersonAdapterModel> OnChangeMasterRecord { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        RazorModel.Setup(this, Grid);
+        await RazorModel.InitAsync();
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        RazorModel.Setup(this, Grid);
+    }
+    public void NeedRefresh()
+    {
+        StateHasChanged();
+    }
+    public async Task NeedInvokeAsync(System.Action action)
+    {
+        await InvokeAsync(action);
+    }
+    public async Task RowSelectHandler(RowSelectEventArgs<PersonAdapterModel> args)
+    {
+        if (OnChangeMasterRecord.HasDelegate)
+        {
+            await OnChangeMasterRecord.InvokeAsync(args.Data);
+        }
+    }
+    public async Task RowDeselectHandler(RowDeselectEventArgs<PersonAdapterModel> args)
+    {
+        if (OnChangeMasterRecord.HasDelegate)
+        {
+            await OnChangeMasterRecord.InvokeAsync(new PersonAdapterModel()
+            {
+                Id = -2,
+                Name = "",
+            });
+        }
+    }
+
+    public async void GetRegisterReport(string type)
+    {
+        /*type = 1 人員名冊
+          type = 2 人員電話地址*/
+        if (string.IsNullOrEmpty(RazorModel.SelectedMonth) || string.IsNullOrEmpty(RazorModel.SelectedYear))
+        {
+            RazorModel.showErrorMessage();
+            return;
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("openInNewTab", $"/ReportRegister/{type}/{RazorModel.SelectedYear}{RazorModel.SelectedMonth}");
+        }
+    }
+}

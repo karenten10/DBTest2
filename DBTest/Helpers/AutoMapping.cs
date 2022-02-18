@@ -1,0 +1,165 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace InspectionBlazor.Helpers
+{
+    using AutoMapper;
+    using Database.Models.Models;
+    using InspectionBlazor.AdapterModels;
+    using InspectionBlazor.DataModels;
+
+    public class AutoMapping : Profile
+    {
+        public AutoMapping()
+        {
+
+            #region Blazor 專案內使用的
+            CreateMap<WorkLog, WorkLogAdapterModel>();
+            CreateMap<WorkLogAdapterModel, WorkLog>();
+            CreateMap<ShiftSchedulingRules, ShiftSchedulingRulesAdapterModel>();
+            CreateMap<ShiftSchedulingRulesAdapterModel, ShiftSchedulingRules>();
+            CreateMap<WorkingPlanCollection, WorkingPlanCollectionAdapterModel>();
+            CreateMap<WorkingPlanCollectionAdapterModel, WorkingPlanCollection>();
+            CreateMap<AttendanceRegister, MyAttendanceRegister>();
+            CreateMap<MyAttendanceRegister, AttendanceRegister>();
+            CreateMap<AttendanceRegister, AttendanceRegisterAdapterModel>();
+            CreateMap<AttendanceRegisterAdapterModel, AttendanceRegister>();
+            CreateMap<LeaveType, LeaveTypeAdapterModel>();
+            CreateMap<LeaveTypeAdapterModel, LeaveType>();
+            CreateMap<ContractorShift, ContractorShiftAdapterModel>();
+            CreateMap<ContractorShiftAdapterModel, ContractorShift>();
+            CreateMap<WorkType, WorkTypeAdapterModel>();
+            CreateMap<WorkTypeAdapterModel, WorkType>();
+            CreateMap<PersonnelChange, PersonnelChangeAdapterModel>();
+            CreateMap<PersonnelChangeAdapterModel, PersonnelChange>();
+            CreateMap<PatrolPathPeriodNplace, PatrolPathPeriodNplaceAdapterModel>();
+            CreateMap<PatrolPathPeriodNplaceAdapterModel, PatrolPathPeriodNplace>();
+            CreateMap<PatrolPathPeriodNexamItem, PatrolPathPeriodNexamItemAdapterModel>();
+            CreateMap<PatrolPathPeriodNexamItemAdapterModel, PatrolPathPeriodNexamItem>();
+            CreateMap<ExpandAllowDay, ExpandAllowDayAdapterModel>();
+            CreateMap<ExpandAllowDayAdapterModel, ExpandAllowDay>();
+            CreateMap<OutCome, OutcomeConflict>();
+            CreateMap<OutcomeConflict, OutCome>();
+            CreateMap<FormMapping, FormMappingAdapterModel>();
+            CreateMap<FormMappingAdapterModel, FormMapping>();
+            CreateMap<FormPath, FormPathAdapterModel>();
+            CreateMap<FormPathAdapterModel, FormPath>();
+            CreateMap<FormReport, FormReportAdapterModel>();
+            CreateMap<FormReportAdapterModel, FormReport>();
+            CreateMap<FaultImproveInbox, FaultImproveAdapterModel>();
+            CreateMap<FaultImproveAdapterModel, FaultImproveInbox>();
+            CreateMap<ManagerApprovalInbox, ManagerApprovalAdapterModel>();
+            CreateMap<ManagerApprovalAdapterModel, ManagerApprovalInbox>();
+            CreateMap<Audit, AuditAdapterModel>();
+            CreateMap<AuditAdapterModel, Audit>();
+            CreateMap<ImageRepository, ImageRepositoryAdapterModel>();
+            CreateMap<ImageRepositoryAdapterModel, ImageRepository>();
+            CreateMap<Remaker, RemakerAdapterModel>();
+            CreateMap<RemakerAdapterModel, Remaker>();
+            CreateMap<EquipmentExamItem, EquipmentExamItemTemplate>();
+            CreateMap<EquipmentExamItemTemplate, EquipmentExamItem>();
+            CreateMap<EquipmentExamItemTemplate, EquipmentExamItemTemplateAdapterModel>();
+            CreateMap<EquipmentExamItemTemplateAdapterModel, EquipmentExamItemTemplate>();
+            CreateMap<EquipmentTemplate, EquipmentTemplateAdapterModel>();
+            CreateMap<EquipmentTemplateAdapterModel, EquipmentTemplate>();
+            CreateMap<Authority, AuthorityAdapterModel>();
+            CreateMap<AuthorityAdapterModel, Authority>();
+            CreateMap<Department, DepartmentAdapterModel>();
+            CreateMap<DepartmentAdapterModel, Department>();
+            CreateMap<AssignedMatters, AssignedMattersAdapterModel>();
+            CreateMap<AssignedMattersAdapterModel, AssignedMatters>();
+            CreateMap<Person, PersonAdapterModel>();
+            CreateMap<PersonAdapterModel, Person>();
+            CreateMap<Bulletin, BulletinAdapterModel>();
+            CreateMap<BulletinAdapterModel, Bulletin>();
+            CreateMap<JobTitle, JobTitleAdapterModel>();
+            CreateMap<JobTitleAdapterModel, JobTitle>();
+            CreateMap<EquipmentExam, EquipmentExamAdapterModel>();
+            CreateMap<EquipmentExamAdapterModel, EquipmentExam>();
+            CreateMap<VirtualEquipmentExamItem, VirtualEquipmentExamItemAdapterModel>();
+            CreateMap<VirtualEquipmentExamItemAdapterModel, VirtualEquipmentExamItem>();
+            CreateMap<Section, SectionAdapterModel>();
+            CreateMap<SectionAdapterModel, Section>();
+            CreateMap<Equipment, EquipmentAdapterModel>();
+            CreateMap<EquipmentAdapterModel, Equipment>();
+            CreateMap<PatrolPath, PatrolPathAdapterModel>();
+            CreateMap<PatrolPathAdapterModel, PatrolPath>();
+            CreateMap<PatrolScope, PatrolScopeAdapterModel>();
+            CreateMap<PatrolScopeAdapterModel, PatrolScope>();
+            CreateMap<PatrolPathScope, PatrolPathScopeAdapterModel>();
+            CreateMap<PatrolPathScopeAdapterModel, PatrolPathScope>();
+            CreateMap<PatrolPlace, PatrolPlaceAdapterModel>();
+            CreateMap<PatrolPlaceAdapterModel, PatrolPlace>();
+            CreateMap<EquipmentExamItem, EquipmentExamItemAdapterModel>();
+            CreateMap<EquipmentExamItemAdapterModel, EquipmentExamItem>();
+            CreateMap<PatrolPathPeriod, PatrolPathPeriodAdapterModel>();
+            CreateMap<PatrolPathPeriodAdapterModel, PatrolPathPeriod>();
+            CreateMap<PatrolPathNplace, PatrolPathNPlaceAdapterModel>();
+            CreateMap<PatrolPathNPlaceAdapterModel, PatrolPathNplace>();
+            CreateMap<EquipmentCategory, EquipmentCategoryAdapterModel>();
+            CreateMap<EquipmentCategoryAdapterModel, EquipmentCategory>();
+            CreateMap<EquipmentCategoryParts, EquipmentCategoryPartsAdapterModel>();
+            CreateMap<EquipmentCategoryPartsAdapterModel, EquipmentCategoryParts>();
+            CreateMap<Equipment, EquipmentAllAdapterModel>();
+            CreateMap<EquipmentAllAdapterModel, Equipment>();
+            CreateMap<EquipmentBasic, EquipmentBasicAdapterModel>();
+            CreateMap<EquipmentBasicAdapterModel, EquipmentBasic>();
+            CreateMap<EquipmentComponent, EquipmentComponentAdapterModel>();
+            CreateMap<EquipmentComponentAdapterModel, EquipmentComponent>();
+            CreateMap<EquipmentMainten, EquipmentMaintenAdapterModel>();
+            CreateMap<EquipmentMaintenAdapterModel, EquipmentMainten>();
+            CreateMap<EquipmentFix, EquipmentFixAdapterModel>();
+            CreateMap<EquipmentFixAdapterModel, EquipmentFix>();
+            CreateMap<EquipmentFile, EquipmentFileAdapterModel>();
+            CreateMap<EquipmentFileAdapterModel, EquipmentFile>();
+            CreateMap<DocRepository, DocRepositoryAdapterModel>();
+            CreateMap<DocRepositoryAdapterModel, DocRepository>();
+            CreateMap<MobileDevice, MobileDeviceAdapterModel>();
+            CreateMap<MobileDeviceAdapterModel, MobileDevice>();
+            CreateMap<HandyMaster, HandyMasterAdapterModel>();
+            CreateMap<HandyMasterAdapterModel, HandyMaster>();
+            CreateMap<HandyDetail, HandyDetailAdapterModel>();
+            CreateMap<HandyDetailAdapterModel, HandyDetail>();
+            CreateMap<CanMessage, CanMessageAdapterModel>();
+            CreateMap<CanMessageAdapterModel, CanMessage>();
+            CreateMap<UpdateFile, UpdateFileAdapterModel>();
+            CreateMap<UpdateFileAdapterModel, UpdateFile>();
+            CreateMap<PadMessage, PadMessageAdapterModel>();
+            CreateMap<PadMessageAdapterModel, PadMessage>();
+            CreateMap<PlaceStayTime, PlaceStayTimeAdapterModel>();
+            CreateMap<PlaceStayTimeAdapterModel, PlaceStayTime>();
+            CreateMap<ExceptionMessage, ExceptionMessageAdapterModel>();
+            CreateMap<ExceptionMessageAdapterModel, ExceptionMessage>();
+            CreateMap<PatrolGroup, PatrolGroupAdapterModel>();
+            CreateMap<PatrolGroupAdapterModel, PatrolGroup>();
+            CreateMap<PatrolGroupNpath, PatrolGroupPathAdapterModel>();
+            CreateMap<PatrolGroupPathAdapterModel, PatrolGroupNpath>();
+            CreateMap<PartInfo, PartInfoAdapterModel>();
+            CreateMap<PartInfoAdapterModel, PartInfo>();
+            CreateMap<PartLocationInfo, PartLocationInfoAdapterModel>();
+            CreateMap<PartLocationInfoAdapterModel, PartLocationInfo>();
+            CreateMap<Mwmaster, MWMasterAdapterModel>();
+            CreateMap<MWMasterAdapterModel, Mwmaster>();
+            CreateMap<Mwdetail, MwdetailAdapterModel>();
+            CreateMap<MwdetailAdapterModel, Mwdetail>();
+            CreateMap<WorkSchedule, WorkScheduleAdapterModel>();
+            CreateMap<WorkScheduleAdapterModel, WorkSchedule>();
+            CreateMap<RepairEquipment, RepairEquipmentAdapterModel>();
+            CreateMap<RepairEquipmentAdapterModel, RepairEquipment>();
+            CreateMap<RepairEquipmentGroup, RepairEquipmentGroupAdapterModel>();
+            CreateMap<RepairEquipmentGroupAdapterModel, RepairEquipmentGroup>();
+            CreateMap<RepairEquipmentNPerson, RepairEquipmentNPersonAdapterModel>();
+            CreateMap<RepairEquipmentNPersonAdapterModel, RepairEquipmentNPerson>();
+            CreateMap<RepairRemaker, RepairRemakerAdapterModel>();
+            CreateMap<RepairRemakerAdapterModel, RepairRemaker>();
+            CreateMap<RepairEquipmentNRepairRemark, RepairEquipmentNRepairRemarkAdapterModel>();
+            CreateMap<RepairEquipmentNRepairRemarkAdapterModel, RepairEquipmentNRepairRemark>();
+            CreateMap<RepairMaster, RepairMasterAdapterModel>();
+            CreateMap<RepairMasterAdapterModel, RepairMaster>();
+            #endregion
+        }
+
+    }
+}

@@ -1,0 +1,9 @@
+﻿@page "/PersonnelChange"
+@attribute [Authorize(Roles = "Administrator,PersonnelChange")]
+@using DBTest.Components.Views
+@using InspectionShare.Helpers
+
+<h1>@MenuHelper.人員異動維護.Name</h1>
+
+<PersonnelChangeView />
+<div style="height:100px"></div>

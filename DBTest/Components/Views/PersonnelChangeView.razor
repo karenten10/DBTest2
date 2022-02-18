@@ -1,0 +1,265 @@
+﻿@using System.Threading
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Calendars
+@using DBTest.Adapters
+@using InspectionBlazor.Services
+@using Database.Models.Models
+@using AutoMapper
+@using InspectionBlazor.AdapterModels
+@using InspectionBlazor.RazorModels
+@using InspectionBlazor.Interfaces
+@using InspectionBlazor.Helpers
+@using InspectionBlazor.DataModels
+@using Syncfusion.Blazor.DropDowns
+@inject PersonnelChangeRazorModel RazorModel
+@implements IRazorPage
+@inject IJSRuntime JSRuntime
+
+<div class="form-group col" style="margin: 10px 0px 10px -14px;">
+    <label class="control-label" style="font-weight: bold;">製作報表：</label>
+    <SfDropDownList TValue="string" TItem="string"
+                    Placeholder="請選擇" DataSource="@RazorModel.listYears" PopupWidth="auto" Width="100px">
+        <DropDownListFieldSettings Value="Title" Text="Title"></DropDownListFieldSettings>
+        <DropDownListEvents TValue="string" TItem="string" ValueChange="@RazorModel.SelectedYearChanged"></DropDownListEvents>
+    </SfDropDownList>
+    <label class="control-label" style="font-weight: bold;">年</label>
+    <SfDropDownList TValue="string" TItem="string"
+                    Placeholder="請選擇" DataSource="@RazorModel.listMonths" PopupWidth="auto" Width="100px">
+        <DropDownListFieldSettings Value="Title" Text="Title"></DropDownListFieldSettings>
+        <DropDownListEvents TValue="string" TItem="string" ValueChange="@RazorModel.SelectedMonthChanged"></DropDownListEvents>
+    </SfDropDownList>
+    <label class="control-label" style="font-weight: bold; margin-right: 12px;">月</label>
+    <SfButton Content="人員異動表" @onclick="@(()=> { GetRegisterReport(); })" />
+</div>
+
+<SfGrid @ref="Grid" TValue="PersonnelChangeAdapterModel"
+        AllowPaging="true"
+        Toolbar="@(new List<string>() { "新增","Search" })">
+    <SfDataManager Adaptor="Adaptors.CustomAdaptor">
+        <PersonnelChangeAdapter></PersonnelChangeAdapter>
+    </SfDataManager>
+    <GridEvents CommandClicked="RazorModel.OnCommandClickedAsync" TValue="PersonnelChangeAdapterModel"
+                OnToolbarClick="RazorModel.ToolbarClickHandlerAsync"></GridEvents>
+    <GridPageSettings PageSize="PersonnelChangePageSize" />
+    <GridSearchSettings Fields=@RazorModel.InitSearch Operator=Syncfusion.Blazor.Operator.Contains IgnoreCase="true"></GridSearchSettings>
+    <GridColumns>
+        <GridColumn Field=@nameof(PersonnelChangeAdapterModel.JobTitleName) HeaderText="職務" Width="100px"></GridColumn>
+        <GridColumn Field=@nameof(PersonnelChangeAdapterModel.VacancyCount) HeaderText="需求人數" Width="100px"></GridColumn>
+        <GridColumn Field=@nameof(PersonnelChangeAdapterModel.MustQualify) HeaderText="必須資格" Width="200px"></GridColumn>
+        <GridColumn Field=@nameof(PersonnelChangeAdapterModel.OptionalQualify) HeaderText="選項資格" Width="200px"></GridColumn>
+        <GridColumn Field=@nameof(PersonnelChangeAdapterModel.PersonName) HeaderText="姓名" Width="100px"></GridColumn>
+        <GridColumn Field=@nameof(PersonnelChangeAdapterModel.OriginalCount) HeaderText="原有人數" Width="100px"></GridColumn>
+        <GridColumn Field=@nameof(PersonnelChangeAdapterModel.IsChangedName) HeaderText="是否異動" Width="100px"></GridColumn>
+        <GridColumn Field=@nameof(PersonnelChangeAdapterModel.ChangedCount) HeaderText="異動後人數" Width="100px"></GridColumn>
+        <GridColumn Field=@nameof(PersonnelChangeAdapterModel.Memo) HeaderText="備註" Width="200px"></GridColumn>
+        @*<GridColumn Field=@nameof(PersonnelChangeAdapterModel.StatusName) HeaderText="@MagicHelper.StatusTitle" Width="100px">
+                <Template>
+                    @{
+                        var currentRec = (context as PersonnelChangeAdapterModel);
+                        @currentRec.StatusName
+                        if (currentRec.Status == @MagicHelper.StatusNoCode)
+                        {
+                            <span class="oi oi-play-circle mx-2 text-success" @onclick="x=>RazorModel.DisableIt(currentRec)" />
+                        }
+                        else
+                        {
+                            <span class="oi oi-media-stop mx-2 text-danger" @onclick="x=>RazorModel.EnableIt(currentRec)" />
+                        }
+                    }
+                </Template>
+            </GridColumn>*@
+        <GridColumn HeaderText="命令" Width="100px" TextAlign="@TextAlign.Center">
+            <GridCommandColumns>
+                <GridCommandColumn ButtonOption="@(new CommandButtonOptions() { Content = "修改", CssClass = "e-flat" })"></GridCommandColumn>
+            </GridCommandColumns>
+        </GridColumn>
+    </GridColumns>
+</SfGrid>
+
+<SfDialog @bind-Visible="@RazorModel.isVisibleRecord" ShowCloseIcon="true" IsModal="true"
+          Width="500px" Height="80%">
+    <DialogTemplates>
+        <Header>@RazorModel.DialogTitle</Header>
+        <Content>
+            <EditForm Model="@RazorModel.CurrentRecord" OnValidSubmit="RazorModel.HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <InputWatcher EditContextActionChanged="@RazorModel.OnEditContestChanged" />
+                <div>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label class="control-label">人員</label>
+                            <SfMultiSelect TValue="int?[]" TItem="Person" Mode="@VisualMode.Default" Placeholder="請選擇"
+                                           DataSource="RazorModel.people"
+                                           @bind-Value="RazorModel.CurrentRecord.PersonIds">
+                                <MultiSelectFieldSettings Text="Name" Value="Id"></MultiSelectFieldSettings>
+                            </SfMultiSelect>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label class="control-label">需求人數</label>
+                            <SfNumericTextBox TValue="int?" Min="0" @bind-Value="RazorModel.CurrentRecord.VacancyCount"></SfNumericTextBox>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label class="control-label">必須資格</label>
+                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.MustQualify" Multiline="true"></SfTextBox>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label class="control-label">選項資格</label>
+                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.OptionalQualify" Multiline="true"></SfTextBox>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label class="control-label">原有人數</label>
+                            <SfNumericTextBox TValue="int?" Min="0" @bind-Value="RazorModel.CurrentRecord.OriginalCount"></SfNumericTextBox>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label class="control-label">是否異動</label>
+                            <SfDropDownList TValue="string" Placeholder="請選擇" TItem="StatusSelectModel"
+                                            @bind-Value="RazorModel.CurrentRecord.IsChanged"
+                                            DataSource="@MagicHelper.StatusList">
+                                <DropDownListFieldSettings Text="Title" Value="Code"></DropDownListFieldSettings>
+                            </SfDropDownList>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label class="control-label">異動後人數</label>
+                            <SfNumericTextBox TValue="int?" Min="0" @bind-Value="RazorModel.CurrentRecord.ChangedCount"></SfNumericTextBox>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label class="control-label">備註</label>
+                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.Memo" Multiline="true"></SfTextBox>
+                        </div>
+                    </div>
+
+                    @*<div class="form-row">
+                            <div class="form-group col">
+                                <label class="control-label">@MagicHelper.StatusTitle</label>
+                                <SfDropDownList TValue="string" Placeholder="請選擇" TItem="StatusSelectModel"
+                                                @bind-Value="RazorModel.CurrentRecord.Status"
+                                                DataSource="@MagicHelper.StatusList">
+                                    <DropDownListFieldSettings Text="Title" Value="Code"></DropDownListFieldSettings>
+                                </SfDropDownList>
+                                <ValidationMessage For="@(() => RazorModel.CurrentRecord.Status)" />
+                            </div>
+                        </div>*@
+                </div>
+            </EditForm>
+        </Content>
+        <FooterTemplate>
+            <div>
+                <button type="submit" class="btn btn-primary" @onclick="RazorModel.OnSaveAsync">儲存</button>
+                <button class="btn btn-secondary" @onclick="RazorModel.OnCancel">取消</button>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogPositionData X="center" Y="center"></DialogPositionData>
+</SfDialog>
+
+<MessageBox Height="@RazorModel.MessageBox.Height" Width="@RazorModel.MessageBox.Width"
+            IsVisible="@RazorModel.MessageBox.IsVisible"
+            Title="@RazorModel.MessageBox.Title" Message="@RazorModel.MessageBox.Body"
+            Callback="x=>RazorModel.MessageBox.Hidden()" />
+
+<ConfirmBox Height="@RazorModel.ConfirmMessageBox.Height" Width="@RazorModel.ConfirmMessageBox.Width"
+            IsVisible="@RazorModel.ConfirmMessageBox.IsVisible"
+            Title="@RazorModel.ConfirmMessageBox.Title" Message="@RazorModel.ConfirmMessageBox.Body"
+            Callback="x=>RazorModel.RemoveThisRecord(x)" />
+
+<InspectionBlazor.Components.DialogBackground />
+
+@code{
+    SfGrid<PersonnelChangeAdapterModel> Grid;
+    [Parameter]
+    public EventCallback<PersonnelChangeAdapterModel> OnChangeMasterRecord { get; set; }
+    [Parameter]
+    public int PersonnelChangePageSize { get; set; } = 5;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RazorModel.SetupAsync(this, Grid);
+        await RazorModel.InitAsync();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender == true)
+        {
+            await RazorModel.SetupAsync(this, Grid);
+        }
+    }
+    public void NeedRefresh()
+    {
+        StateHasChanged();
+    }
+    public async Task NeedInvokeAsync(System.Action action)
+    {
+        await InvokeAsync(action);
+    }
+    public async Task RowSelectHandler(RowSelectEventArgs<PersonnelChangeAdapterModel> args)
+    {
+        if (OnChangeMasterRecord.HasDelegate)
+        {
+            await OnChangeMasterRecord.InvokeAsync(args.Data);
+        }
+    }
+    public async Task RowDeselectHandler(RowDeselectEventArgs<PersonnelChangeAdapterModel> args)
+    {
+        if (OnChangeMasterRecord.HasDelegate)
+        {
+            await OnChangeMasterRecord.InvokeAsync(new PersonnelChangeAdapterModel()
+            {
+                Id = -2,
+            });
+        }
+    }
+    public async void GetRegisterReport()
+    {
+        /*type = 1 人員名冊
+          type = 2 人員電話地址*/
+        if (string.IsNullOrEmpty(RazorModel.SelectedMonth) || string.IsNullOrEmpty(RazorModel.SelectedYear))
+        {
+            RazorModel.showErrorMessage();
+            return;
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("openInNewTab", $"/ReportPersonnelChange/{RazorModel.SelectedYear}{RazorModel.SelectedMonth}");
+        }
+    }
+
+
+}
+<style>
+    .e-rowcell {
+        white-space: -moz-pre-wrap !important;
+        white-space: -webkit-pre-wrap !important;
+        white-space: -pre-wrap !important;
+        white-space: -o-pre-wrap !important;
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+        word-break: break-all !important;
+        white-space: normal !important;
+    }
+</style>

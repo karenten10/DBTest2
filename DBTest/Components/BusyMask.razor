@@ -1,0 +1,55 @@
+﻿@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.ProgressBar
+
+<SfDialog @bind-Visible="@IsVisible" Width="@Width" ShowCloseIcon="false" IsModal="true">
+    <DialogTemplates>
+        <Content>
+            <div class="w-100">
+                <div class="text-center">
+                    <h4>@Message</h4>
+                </div>
+                <div class="m-2 align-items-center" align="center">
+                    <SfProgressBar Type="ProgressType.Circular" Value="20" Width="160px" Height="160px"
+                                   StartAngle="180" EndAngle="180" CornerRadius="CornerType.Round"
+                                   IsIndeterminate="true" Minimum="0" Maximum="100"
+                                   Theme="Theme.Bootstrap">
+                        <ProgressBarAnimation Enable="true" Duration="2000" Delay="0"></ProgressBarAnimation>
+                    </SfProgressBar>
+                </div>
+            </div>
+        </Content>
+    </DialogTemplates>
+</SfDialog>
+
+<DialogBackground />
+
+@code {
+    bool isVisible = false;
+    [Parameter]
+    public bool IsVisible
+    {
+        get
+        {
+            return isVisible;
+        }
+        set
+        {
+            isVisible = value;
+            if (isVisible == true)
+            {
+                StateHasChanged();
+            }
+        }
+    }
+    [Parameter]
+    public string Height { get; set; } = "250px";
+    [Parameter]
+    public string Width { get; set; } = "435px";
+    [Parameter]
+    public string Title { get; set; } = "通知訊息";
+    [Parameter]
+    public string Message { get; set; } = "訊息內容";
+}

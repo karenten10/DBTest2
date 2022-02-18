@@ -1,0 +1,79 @@
+﻿@using Syncfusion.Blazor;
+@using Syncfusion.Blazor.Data;
+@using Newtonsoft.Json
+@*@using InspectionBlazor.Data*@
+@using InspectionBlazor.Services
+@using Database.Models.Models
+@using AutoMapper
+@using InspectionBlazor.AdapterModels
+@using InspectionBlazor.Helpers
+@inherits DataAdaptor<PersonnelChangeService>
+@inject PersonService PersonService
+@inject JobTitleService JobTitleService
+@inject PersonnelChangeService PersonnelChangeService
+@inject IMapper Mapper
+
+<CascadingValue Value="@this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter]
+    [JsonIgnore]
+    public RenderFragment ChildContent { get; set; }
+
+    public override async Task<object> ReadAsync(DataManagerRequest dataManagerRequest, string key = null)
+    {
+        var DataSource = await Service.GetAsync();
+
+        var pageModelObject = DataSource;
+
+        #region 在這裡進行 轉接器 資料模型 的額外屬性初始化
+        foreach (var itemPageModelObject in pageModelObject)
+        {
+            itemPageModelObject.PersonIds = await PersonnelChangeService.GetPersonIdsAsync(itemPageModelObject.Id);
+            itemPageModelObject.IsChangedName = MagicHelper.GetStatusName(itemPageModelObject.IsChanged);
+            itemPageModelObject.StatusName = MagicHelper.GetStatusName(itemPageModelObject.Status);
+            itemPageModelObject.PersonName = await PersonService.GetPeopleName(itemPageModelObject.PersonIds);
+            itemPageModelObject.JobTitleName = await JobTitleService.GetJobTitleByPeopleAsync(itemPageModelObject.PersonIds);
+        }
+        #endregion
+
+        var tempData = pageModelObject.AsQueryable();
+
+        if (dataManagerRequest.Search != null && dataManagerRequest.Search.Count > 0)
+        {
+            // Searching
+            tempData = DataOperations.PerformSearching(tempData, dataManagerRequest.Search);
+        }
+        if (dataManagerRequest.Sorted != null && dataManagerRequest.Sorted.Count > 0)
+        {
+            // Sorting
+            tempData = DataOperations.PerformSorting(tempData, dataManagerRequest.Sorted);
+        }
+        if (dataManagerRequest.Where != null && dataManagerRequest.Where.Count > 0)
+        {
+            // Filtering
+            tempData = DataOperations.PerformFiltering(tempData, dataManagerRequest.Where, dataManagerRequest.Where[0].Operator);
+        }
+        int count = tempData.Count();
+        if (dataManagerRequest.Skip != 0)
+        {
+            //Paging
+            tempData = DataOperations.PerformSkip(tempData, dataManagerRequest.Skip);
+        }
+        if (dataManagerRequest.Take != 0)
+        {
+            tempData = DataOperations.PerformTake(tempData, dataManagerRequest.Take);
+        }
+
+        pageModelObject = tempData.ToList();
+
+        var item = dataManagerRequest.RequiresCounts
+            ? new DataResult() { Result = pageModelObject, Count = count }
+            : (object)pageModelObject;
+        await Task.Yield();
+
+        return item;
+    }
+}

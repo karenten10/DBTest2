@@ -1,0 +1,82 @@
+﻿@using Syncfusion.Blazor;
+@using Syncfusion.Blazor.Data;
+@using Newtonsoft.Json
+@using DBTest.Data
+@using InspectionBlazor.Services
+@using Database.Models.Models
+@using AutoMapper
+@using InspectionBlazor.AdapterModels
+@using InspectionBlazor.Helpers
+@using InspectionShare.Enums
+@inherits DataAdaptor<PersonService>
+@inject IMapper Mapper
+@inject DepartmentService DepartmentService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+<CascadingValue Value="@this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter]
+    [JsonIgnore]
+    public RenderFragment ChildContent { get; set; }
+
+    public override async Task<object> ReadAsync(DataManagerRequest dataManagerRequest, string key = null)
+    {
+        UserHelper userHelper = new UserHelper(AuthenticationStateProvider);
+        (int UserId, string Account, string UserName) = await userHelper.GetUserInformation2Async();
+
+        var DataSource = await Service.GetAsync("httc", 3/*Account,UserId*/);
+
+        if (dataManagerRequest.Search != null && dataManagerRequest.Search.Count > 0)
+        {
+            // Searching
+            DataSource = DataOperations.PerformSearching(DataSource, dataManagerRequest.Search);
+        }
+        if (dataManagerRequest.Sorted != null && dataManagerRequest.Sorted.Count > 0)
+        {
+            // Sorting
+            DataSource = DataOperations.PerformSorting(DataSource, dataManagerRequest.Sorted);
+        }
+        if (dataManagerRequest.Where != null && dataManagerRequest.Where.Count > 0)
+        {
+            // Filtering
+            DataSource = DataOperations.PerformFiltering(DataSource, dataManagerRequest.Where, dataManagerRequest.Where[0].Operator);
+        }
+        int count = DataSource.Cast<PersonAdapterModel>().Count();
+        if (dataManagerRequest.Skip != 0)
+        {
+            //Paging
+            DataSource = DataOperations.PerformSkip(DataSource, dataManagerRequest.Skip);
+        }
+        if (dataManagerRequest.Take != 0)
+        {
+            DataSource = DataOperations.PerformTake(DataSource, dataManagerRequest.Take);
+        }
+
+        List<PersonAdapterModel> pageModelObject = Mapper.Map<List<PersonAdapterModel>>(DataSource);
+
+        #region 在這裡進行 轉接器 資料模型 的額外屬性初始化
+        foreach (var itemPageModelObject in pageModelObject)
+        {
+            string lastUser = itemPageModelObject.LastUpdateUser != null ?
+                                await Service.GetPersonName(itemPageModelObject.LastUpdateUser.Value) :
+                                "---";
+            string lastTime = itemPageModelObject.LastUpdateTime != null ?
+                                itemPageModelObject.LastUpdateTime.Value.ToString("yyyy/MM/dd HH:mm:ss") :
+                                "---";
+
+            itemPageModelObject.StatusName = MagicHelper.GetStatusName(itemPageModelObject.Status);
+            itemPageModelObject.ShowLastUpdateUser = $"最後更新者：{lastUser}";
+            itemPageModelObject.ShowLastUpdateTime = $"最後更新時間：{lastTime}";
+        }
+        #endregion
+
+        var item = dataManagerRequest.RequiresCounts
+            ? new DataResult() { Result = pageModelObject, Count = count }
+            : (object)pageModelObject;
+        await Task.Yield();
+
+        return item;
+    }
+}

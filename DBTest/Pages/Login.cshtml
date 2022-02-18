@@ -1,0 +1,228 @@
+﻿@page
+@model InspectionBlazor.Pages.LoginModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using InspectionBlazor.Helpers
+
+@{
+    ViewData["Title"] = "登入";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <title>@MagicHelper.SysName - 登入</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+    <link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="css/util.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+<body style="min-width: 350px; min-height: 700px; background: #e9ecf1;">
+    <div class="limiter">
+        <div class="container-login100">
+            <div style="z-index: 0; margin-top: 20px; text-align: center;">
+                <img src="images/Login_Title.png" style="max-height: 100px; max-width: 330px; margin-top: -18px; " alt="IMG">
+            </div>
+            <div class="title-out">
+                <div style="z-index: 0;text-align: center;margin-bottom: 26px;margin-top: 20px;">
+                    <lable style="color: #383d41;font-size: 28px;font-family: Microsoft JhengHei;font-weight: bold;">
+                        @MagicHelper.SysName
+                    </lable>
+                </div>
+            </div>
+            <div>
+                <div style="width: 100%;text-align: center;height: 40px;">
+                    <label style="color: #ffffff;background-color: #3c6382;width: 350px;font-size: 19px;height: 40px;font-weight: bold;line-height: 40px;">使用者登入</label>
+                </div>
+                <div class="wrap-login100" style="background-color: #ffffff; border-radius: 0px;">
+                    <form class="login100-form validate-form" method="post">
+                        <label class="myLabel">帳號</label>
+                        <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+                            <input class="input100" type="text" asp-for="Username" placeholder="請輸入帳號"
+                                   style="outline: none !important; border-style: solid !important; border-color: #eaeaeb !important;"/>
+                            <span class="symbol-input100">
+                                <i class="fa fa-user-circle" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                        <label class="myLabel">密碼</label>
+                        <div class="wrap-input100 validate-input" data-validate="Password is required">
+                            <input class="input100" type="@Model.PasswordType" asp-for="Password" placeholder="請輸入密碼" 
+                                   style="outline: none !important; border-style: solid !important; border-color: #eaeaeb !important;"/>
+                            @Html.AntiForgeryToken()
+                            <span class="symbol-input100">
+                                <i class="fa fa-key" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                        <label class="myLabel">驗證碼</label>
+                        <div class="wrap-input100 validate-input" data-validate="ValidateCode is required">
+                            <input class="input100" type="text" asp-for="inputValidateCode" value="@Model.inputValidateCode" placeholder="請輸入驗證碼"
+                                   style="outline: none !important; border-style: solid !important; border-color: #eaeaeb !important;"/>
+                            <span class="symbol-input100">
+                                <i class="fa fa-lock" aria-hidden="true"></i>
+                            </span>
+                            <span class="symbol-input100" style="pointer-events: none; ">
+                                <img style="margin-left: 73%; border-style: ridge;" id="code" src='data:image/jpeg;base64, @Model.base64ValidateCode' />
+                                @*<a asp-page-handler="RefreshCode" style="pointer-events: fill;">
+                                    <i class="fa fa-refresh" aria-hidden="true" style="margin-left: 18px; margin-top: 9px;"></i>
+                                </a>*@
+                            </span>
+                        </div>
+                        <div class="alert-msg">@Model.Msg</div>
+                        <input style="width:1px;height:1px;visibility:hidden" type="text" asp-for="checkCode" value="@Model.checkValidateCode" placeholder="請輸入驗證碼" />
+
+                        <div class="container-login100-form-btn">
+                            <input class="login100-form-btn" style="margin-top: -10px;" type="submit" value="登入" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div style="position: fixed;
+                        bottom: 0px;
+                        background-color: #2d3436;
+                        width: 100%;
+                        z-index:900000;
+                        padding-bottom: 0px;
+                        border-top-width: 1px;
+                        left: 0px;
+                        opacity: 0.7;
+                        height: 25px;
+                        padding-right: 16px;">
+                <div style="text-align: right;">
+                    <div style="color: white;">
+                        <label style="font-size: 12px;font-family: Microsoft JhengHei;">@MagicHelper.SysInfo</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<style>
+    .back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+        .back img {
+            width: 100%;
+            height: 100%;
+        }
+
+    .wrap-login100 {
+        z-index: 0;
+        padding-top: 20px;
+        padding-right: 30px;
+        padding-bottom: 30px;
+        padding-left: 30px;
+        margin-bottom: 40px;
+        width: 350px;
+    }
+
+    .login100-pic {
+        border: solid 1px darkgray;
+        border-radius: 10px;
+        padding-top: 68px;
+        text-align: center;
+    }
+
+    .login100-form {
+        width: 300px;
+    }
+
+    .login100-form-title {
+        padding-bottom: 20px;
+    }
+
+    .logo {
+        z-index: 0;
+        width: 960px;
+        margin-top: -80px;
+        margin-bottom: -218px;
+        text-align: center;
+    }
+
+    .title-out {
+        width: 100%;
+        z-index: 9;
+    }
+
+    .title {
+        z-index: 0;
+        width: 960px;
+        text-align: center;
+        color: white;
+        margin-top: 60px;
+        margin-bottom: -50px;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 58px;
+        font-family: Microsoft JhengHei;
+    }
+
+    .logo-left {
+        float: left;
+        width: 30%;
+    }
+
+    .logo-right {
+        float: left;
+        width: 70%;
+        color: white;
+        font-size: 90px;
+        padding-left: 10px;
+        padding-top: 12px;
+    }
+
+    .logo-left img {
+        width: 98%;
+    }
+
+    .alert-msg {
+        color: #dc3545;
+        margin-left: 25px;
+        margin-top: 0px;
+        margin-bottom: 8px;
+    }
+
+    .footer {
+        z-index: 0;
+        width: 100%;
+    }
+
+    .footer-container {
+        width: 900px;
+        margin: 0 auto;
+    }
+
+    .footer-left {
+        float: left;
+        width: 35%;
+        text-align: right;
+    }
+
+        .footer-left img {
+            width: 100px;
+        }
+
+    .footer-right {
+        float: left;
+        width: 65%;
+        color: white;
+        font-size: 16px;
+        padding-top: 10px;
+        padding-left: 15px;
+    }
+
+    .myLabel {
+        color: slategray;
+        font-weight: bold;
+        font-size: 14px;
+    }
+</style>

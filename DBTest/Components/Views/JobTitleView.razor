@@ -1,0 +1,125 @@
+﻿@using System.Threading
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Calendars
+@using DBTest.Adapters
+@using InspectionBlazor.Services
+@using Database.Models.Models
+@using AutoMapper
+@using InspectionBlazor.AdapterModels
+@using InspectionBlazor.RazorModels
+@using InspectionBlazor.Interfaces
+@using InspectionBlazor.Helpers
+@using Syncfusion.Blazor.DropDowns
+@inject JobTitleRazorModel RazorModel
+@implements IRazorPage
+
+<SfGrid @ref="Grid" TValue="JobTitleAdapterModel"
+        AllowPaging="true"
+        Toolbar="@(new List<string>() { "新增","Search" })">
+    <SfDataManager Adaptor="Adaptors.CustomAdaptor">
+        <JobTitleAdapter></JobTitleAdapter>
+    </SfDataManager>
+    <GridEvents CommandClicked="RazorModel.OnCommandClicked" TValue="JobTitleAdapterModel"
+                OnToolbarClick="RazorModel.ToolbarClickHandler"
+                RowSelected="RowSelectHandler" RowDeselected="RowDeselectHandler"></GridEvents>
+    <GridPageSettings PageSize="@MagicHelper.DefalutPageSize"/>
+    <GridSearchSettings Fields=@RazorModel.InitSearch Operator=Syncfusion.Blazor.Operator.Contains IgnoreCase="true"></GridSearchSettings>
+    <GridColumns>
+        <GridColumn Field=@nameof(JobTitleAdapterModel.Name) HeaderText="職稱"></GridColumn>
+        <GridColumn HeaderText="命令" Width="150" TextAlign="@TextAlign.Center">
+            <GridCommandColumns>
+                <GridCommandColumn ButtonOption="@(new CommandButtonOptions() { Content = "修改", CssClass = "e-flat" })"></GridCommandColumn>
+            </GridCommandColumns>
+        </GridColumn>
+    </GridColumns>
+</SfGrid>
+
+<SfDialog @bind-Visible="@RazorModel.isVisibleRecord" ShowCloseIcon="true" IsModal="true"
+          Width="500px" Height="250px">
+    <DialogTemplates>
+        <Header>@RazorModel.DialogTitle</Header>
+        <Content>
+            <EditForm Model="@RazorModel.CurrentRecord" OnValidSubmit="RazorModel.HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <InputWatcher EditContextActionChanged="@RazorModel.OnEditContestChanged" />
+                <div>
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label for="Name" class="control-label">職稱</label>
+                            <SfTextBox @bind-Value="RazorModel.CurrentRecord.Name"></SfTextBox>
+                            <ValidationMessage For="@(() => RazorModel.CurrentRecord.Name)" />
+                        </div>
+                    </div>
+                </div>
+            </EditForm>
+        </Content>
+        <FooterTemplate>
+            <div>
+                <button type="submit" class="btn btn-primary" @onclick="RazorModel.OnSaveAsync">儲存</button>
+                <button class="btn btn-secondary" @onclick="RazorModel.OnCancel">取消</button>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogPositionData X="center" Y="center"></DialogPositionData>
+</SfDialog>
+
+<MessageBox Height="@RazorModel.MessageBox.Height" Width="@RazorModel.MessageBox.Width"
+            IsVisible="@RazorModel.MessageBox.IsVisible"
+            Title="@RazorModel.MessageBox.Title" Message="@RazorModel.MessageBox.Body"
+            Callback="x=>RazorModel.MessageBox.Hidden()" />
+
+<ConfirmBox Height="@RazorModel.ConfirmMessageBox.Height" Width="@RazorModel.ConfirmMessageBox.Width"
+            IsVisible="@RazorModel.ConfirmMessageBox.IsVisible"
+            Title="@RazorModel.ConfirmMessageBox.Title" Message="@RazorModel.ConfirmMessageBox.Body"
+            Callback="x=>RazorModel.RemoveThisRecord(x)" />
+
+<DBTest.Components.DialogBackground />
+
+@code{
+    SfGrid<JobTitleAdapterModel> Grid;
+    [Parameter]
+    public EventCallback<JobTitleAdapterModel> OnChangeMasterRecord { get; set; }
+
+    protected override void OnInitialized()
+    {
+        RazorModel.Setup(this, Grid);
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender == true)
+        {
+            RazorModel.Setup(this, Grid);
+        }
+    }
+    public void NeedRefresh()
+    {
+        StateHasChanged();
+    }
+    public async Task NeedInvokeAsync(System.Action action)
+    {
+        await InvokeAsync(action);
+    }
+    public async Task RowSelectHandler(RowSelectEventArgs<JobTitleAdapterModel> args)
+    {
+        if (OnChangeMasterRecord.HasDelegate)
+        {
+            await OnChangeMasterRecord.InvokeAsync(args.Data);
+        }
+    }
+    public async Task RowDeselectHandler(RowDeselectEventArgs<JobTitleAdapterModel> args)
+    {
+        if (OnChangeMasterRecord.HasDelegate)
+        {
+            await OnChangeMasterRecord.InvokeAsync(new JobTitleAdapterModel()
+            {
+                Id = -2,
+                Name = "",
+            });
+        }
+    }
+}
