@@ -2521,7 +2521,7 @@
     <value>開始時區</value>
   </data>
   <data name="Schedule_Subject" xml:space="preserve">
-    <value>學科</value>
+    <value>標題</value>
   </data>
   <data name="Schedule_TimelineDay" xml:space="preserve">
     <value>時間軸日</value>
