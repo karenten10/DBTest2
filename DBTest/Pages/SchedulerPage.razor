@@ -1,0 +1,9 @@
+﻿@page "/Scheduler"
+@attribute [Authorize(Roles = "Administrator,Scheduler")]
+@using DBTest.Components.Views
+@using InspectionShare.Helpers
+
+<h1>Scheduler</h1>
+
+<SchedulerView />
+<div style="height:100px"></div>

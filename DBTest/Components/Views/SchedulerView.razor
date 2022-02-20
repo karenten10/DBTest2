@@ -1,0 +1,122 @@
+﻿@using System.Threading
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.Schedule
+@using DBTest.Adapters
+@using InspectionBlazor.Services
+@using Database.Models.Models
+@using AutoMapper
+@using InspectionBlazor.AdapterModels
+@using InspectionBlazor.RazorModels
+@using InspectionBlazor.Interfaces
+@using InspectionBlazor.Helpers
+@using Syncfusion.Blazor.DropDowns
+@inject JobTitleRazorModel RazorModel
+@implements IRazorPage
+
+<SfSchedule TValue=AppointmentData Height="650px" @bind-SelectedDate="@CurrentDate" @bind-CurrentView="@CurrentView">
+    <ScheduleEventSettings DataSource="@DataSource"></ScheduleEventSettings>
+    <ScheduleViews>
+        <ScheduleView Option="View.Day"></ScheduleView>
+        <ScheduleView Option="View.Week" StartHour="07:00" EndHour="15:00"></ScheduleView>
+        <ScheduleView Option="View.WorkWeek" StartHour="10:00" EndHour="18:00"></ScheduleView>
+        <ScheduleView Option="View.Month" MaxEventsPerRow="2" ShowWeekend="false"></ScheduleView>
+        <ScheduleView Option="View.Agenda"></ScheduleView>
+    </ScheduleViews>
+</SfSchedule>
+
+<MessageBox Height="@RazorModel.MessageBox.Height" Width="@RazorModel.MessageBox.Width"
+            IsVisible="@RazorModel.MessageBox.IsVisible"
+            Title="@RazorModel.MessageBox.Title" Message="@RazorModel.MessageBox.Body"
+            Callback="x=>RazorModel.MessageBox.Hidden()" />
+
+<ConfirmBox Height="@RazorModel.ConfirmMessageBox.Height" Width="@RazorModel.ConfirmMessageBox.Width"
+            IsVisible="@RazorModel.ConfirmMessageBox.IsVisible"
+            Title="@RazorModel.ConfirmMessageBox.Title" Message="@RazorModel.ConfirmMessageBox.Body"
+            Callback="x=>RazorModel.RemoveThisRecord(x)" />
+
+<DBTest.Components.DialogBackground />
+
+@code{
+    SfGrid<JobTitleAdapterModel> Grid;
+    [Parameter]
+    public EventCallback<JobTitleAdapterModel> OnChangeMasterRecord { get; set; }
+
+    View CurrentView = View.Month;
+    DateTime CurrentDate = DateTime.Now;
+    List<AppointmentData> DataSource = new List<AppointmentData>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        RazorModel.Setup(this, Grid);
+        await GenerateData();
+
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender == true)
+        {
+            RazorModel.Setup(this, Grid);
+        }
+    }
+    public void NeedRefresh()
+    {
+        StateHasChanged();
+    }
+    public async Task NeedInvokeAsync(System.Action action)
+    {
+        await InvokeAsync(action);
+    }
+    public async Task RowSelectHandler(RowSelectEventArgs<JobTitleAdapterModel> args)
+    {
+        if (OnChangeMasterRecord.HasDelegate)
+        {
+            await OnChangeMasterRecord.InvokeAsync(args.Data);
+        }
+    }
+    public async Task RowDeselectHandler(RowDeselectEventArgs<JobTitleAdapterModel> args)
+    {
+        if (OnChangeMasterRecord.HasDelegate)
+        {
+            await OnChangeMasterRecord.InvokeAsync(new JobTitleAdapterModel()
+            {
+                Id = -2,
+                Name = "",
+            });
+        }
+    }
+
+    public async Task GenerateData()
+    {
+        CurrentView = View.Month;
+        CurrentDate = DateTime.Now;
+        DataSource = new List<AppointmentData>
+        {
+            new AppointmentData { Id = 1, Subject = "Paris", StartTime = new DateTime(2022, 2, 13, 10, 0, 0) , EndTime = new DateTime(2022, 2, 13, 12, 0, 0) },
+            new AppointmentData { Id = 2, Subject = "Germany", StartTime = new DateTime(2022, 2, 15, 10, 0, 0) , EndTime = new DateTime(2022, 2, 15, 12, 0, 0) },
+            new AppointmentData { Id = 2, Subject = "Taiwan", StartTime = new DateTime(2022, 2, 16, 10, 0, 0) , EndTime = new DateTime(2022, 2, 16, 12, 0, 0) },
+            new AppointmentData { Id = 2, Subject = "Kaohsiung", StartTime = new DateTime(2022, 2, 17, 10, 0, 0) , EndTime = new DateTime(2022, 2, 17, 12, 0, 0) }
+        };
+
+        await Task.Yield();
+    }
+
+    public class AppointmentData
+    {
+        public int Id { get; set; }
+        public string Subject { get; set; }
+        public string Location { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public string Description { get; set; }
+        public bool IsAllDay { get; set; }
+        public string RecurrenceRule { get; set; }
+        public string RecurrenceException { get; set; }
+        public Nullable<int> RecurrenceID { get; set; }
+    }
+}
