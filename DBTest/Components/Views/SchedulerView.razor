@@ -17,6 +17,7 @@
 @using InspectionBlazor.Helpers
 @using Syncfusion.Blazor.DropDowns
 @inject JobTitleRazorModel RazorModel
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @implements IRazorPage
 
 <SfSchedule TValue=AppointmentData Height="650px" @bind-SelectedDate="@CurrentDate" @bind-CurrentView="@CurrentView">
@@ -25,7 +26,7 @@
         <ScheduleView Option="View.Day"></ScheduleView>
         <ScheduleView Option="View.Week" StartHour="07:00" EndHour="15:00"></ScheduleView>
         <ScheduleView Option="View.WorkWeek" StartHour="10:00" EndHour="18:00"></ScheduleView>
-        <ScheduleView Option="View.Month" MaxEventsPerRow="2" ShowWeekend="false"></ScheduleView>
+        <ScheduleView Option="View.Month" MaxEventsPerRow="2" ShowWeekend="true"></ScheduleView>
         <ScheduleView Option="View.Agenda"></ScheduleView>
     </ScheduleViews>
 </SfSchedule>
@@ -50,6 +51,8 @@
     View CurrentView = View.Month;
     DateTime CurrentDate = DateTime.Now;
     List<AppointmentData> DataSource = new List<AppointmentData>();
+
+    public string UserAccount { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
@@ -91,17 +94,86 @@
         }
     }
 
+    public async Task GenerateUser1Data()
+    {
+        DataSource = new List<AppointmentData>
+        {
+            new AppointmentData { Id = 1, Subject = "美國", StartTime = new DateTime(2022, 2, 15, 10, 0, 0) , EndTime = new DateTime(2022, 2, 16, 12, 0, 0) },
+            new AppointmentData { Id = 2, Subject = "日本", StartTime = new DateTime(2022, 2, 22, 10, 0, 0) , EndTime = new DateTime(2022, 2, 23, 12, 0, 0) },
+            new AppointmentData { Id = 3, Subject = "義大利", StartTime = new DateTime(2022, 3, 1, 10, 0, 0) , EndTime = new DateTime(2022, 3, 2, 12, 0, 0) },
+        };
+
+        await Task.Yield();
+    }
+
+    public async Task GenerateUser2Data()
+    {
+        DataSource = new List<AppointmentData>
+        {
+            new AppointmentData { Id = 1, Subject = "紐西蘭", StartTime = new DateTime(2022, 2, 10, 10, 0, 0) , EndTime = new DateTime(2022, 2, 11, 12, 0, 0) },
+            new AppointmentData { Id = 2, Subject = "菲律賓", StartTime = new DateTime(2022, 2, 16, 10, 0, 0) , EndTime = new DateTime(2022, 2, 17, 12, 0, 0) },
+            new AppointmentData { Id = 3, Subject = "德國", StartTime = new DateTime(2022, 2, 22, 10, 0, 0) , EndTime = new DateTime(2022, 2, 23, 12, 0, 0) },
+        };
+
+        await Task.Yield();
+    }
+
+    public async Task GenerateUser3Data()
+    {
+        DataSource = new List<AppointmentData>
+        {
+            new AppointmentData { Id = 1, Subject = "法國", StartTime = new DateTime(2022, 2, 18, 10, 0, 0) , EndTime = new DateTime(2022, 2, 19, 12, 0, 0) },
+            new AppointmentData { Id = 2, Subject = "香港", StartTime = new DateTime(2022, 2, 24, 10, 0, 0) , EndTime = new DateTime(2022, 2, 25, 12, 0, 0) },
+            new AppointmentData { Id = 3, Subject = "英國", StartTime = new DateTime(2022, 3, 2, 10, 0, 0) , EndTime = new DateTime(2022, 3, 3, 12, 0, 0) },
+        };
+
+        await Task.Yield();
+    }
+
+    public async Task GenerateUserCommonData()
+    {
+        DataSource = new List<AppointmentData>
+        {
+            new AppointmentData { Id = 1, Subject = "泰國", StartTime = new DateTime(2022, 2, 15, 10, 0, 0) , EndTime = new DateTime(2022, 2, 16, 12, 0, 0) },
+            new AppointmentData { Id = 2, Subject = "比利時", StartTime = new DateTime(2022, 2, 23, 10, 0, 0) , EndTime = new DateTime(2022, 2, 24, 12, 0, 0) },
+            new AppointmentData { Id = 3, Subject = "土耳其", StartTime = new DateTime(2022, 3, 3, 10, 0, 0) , EndTime = new DateTime(2022, 3, 4, 12, 0, 0) },
+            new AppointmentData { Id = 4, Subject = "日本", StartTime = new DateTime(2022, 3, 10, 10, 0, 0) , EndTime = new DateTime(2022, 3, 11, 12, 0, 0) }
+        };
+
+        await Task.Yield();
+    }
+
+    public async Task GenerateUserData()
+    {
+        if (UserAccount == "user1")
+        {
+            await GenerateUser1Data();
+        } else if (UserAccount == "user2")
+        {
+            await GenerateUser2Data();
+        }
+        else if (UserAccount == "user3")
+        {
+            await GenerateUser3Data();
+        } else
+        {
+            await GenerateUserCommonData();
+        }
+
+        await Task.Yield();
+    }
+
     public async Task GenerateData()
     {
         CurrentView = View.Month;
         CurrentDate = DateTime.Now;
-        DataSource = new List<AppointmentData>
-        {
-            new AppointmentData { Id = 1, Subject = "Paris", StartTime = new DateTime(2022, 2, 13, 10, 0, 0) , EndTime = new DateTime(2022, 2, 13, 12, 0, 0) },
-            new AppointmentData { Id = 2, Subject = "Germany", StartTime = new DateTime(2022, 2, 15, 10, 0, 0) , EndTime = new DateTime(2022, 2, 15, 12, 0, 0) },
-            new AppointmentData { Id = 2, Subject = "Taiwan", StartTime = new DateTime(2022, 2, 16, 10, 0, 0) , EndTime = new DateTime(2022, 2, 16, 12, 0, 0) },
-            new AppointmentData { Id = 2, Subject = "Kaohsiung", StartTime = new DateTime(2022, 2, 17, 10, 0, 0) , EndTime = new DateTime(2022, 2, 17, 12, 0, 0) }
-        };
+
+        UserHelper userHelper = new UserHelper(AuthenticationStateProvider);
+        (int UserId, string Account, string userName) = await userHelper.GetUserInformation2Async();
+
+        UserAccount = Account;
+
+        await GenerateUserData();
 
         await Task.Yield();
     }
