@@ -21,6 +21,12 @@
 @implements IRazorPage
 
 <SfSchedule TValue=AppointmentData Height="650px" @bind-SelectedDate="@CurrentDate" @bind-CurrentView="@CurrentView">
+    <ScheduleResources>
+        <ScheduleResource TItem="ResourceData" TValue="int" DataSource="@PeriodData" 
+                          Field="ResourceId" Title="Periods" Name="ResourceName" 
+                          TextField="PeriodText" IdField="PeriodId" ColorField="PeriodColor" 
+                          AllowMultiple="false"></ScheduleResource>
+    </ScheduleResources>
     <ScheduleEventSettings DataSource="@DataSource"></ScheduleEventSettings>
     <ScheduleViews>
         <ScheduleView Option="View.Day"></ScheduleView>
@@ -51,6 +57,12 @@
     View CurrentView = View.Month;
     DateTime CurrentDate = DateTime.Now;
     List<AppointmentData> DataSource = new List<AppointmentData>();
+
+    public List<ResourceData> PeriodData { get; set; } = new List<ResourceData> {
+        new ResourceData{ PeriodText = "早上", PeriodId= 1, PeriodColor = "#df5286" },
+        new ResourceData{ PeriodText = "下午", PeriodId= 2, PeriodColor = "#7fa900" },
+        new ResourceData{ PeriodText = "晚間", PeriodId= 3, PeriodColor = "#ea7a57" }
+    };
 
     public string UserAccount { get; set; }
 
@@ -98,9 +110,12 @@
     {
         DataSource = new List<AppointmentData>
         {
-            new AppointmentData { Id = 1, Subject = "美國", StartTime = new DateTime(2022, 2, 15, 10, 0, 0) , EndTime = new DateTime(2022, 2, 16, 12, 0, 0) },
-            new AppointmentData { Id = 2, Subject = "日本", StartTime = new DateTime(2022, 2, 22, 10, 0, 0) , EndTime = new DateTime(2022, 2, 23, 12, 0, 0) },
-            new AppointmentData { Id = 3, Subject = "義大利", StartTime = new DateTime(2022, 3, 1, 10, 0, 0) , EndTime = new DateTime(2022, 3, 2, 12, 0, 0) },
+            new AppointmentData { Id = 1, Subject = "美國-紐約", StartTime = new DateTime(2022, 2, 15, 10, 0, 0) , EndTime = new DateTime(2022, 2, 15, 12, 0, 0), ResourceId=1 },
+            new AppointmentData { Id = 2, Subject = "美國-華盛頓特區", StartTime = new DateTime(2022, 2, 15, 15, 0, 0) , EndTime = new DateTime(2022, 2, 15, 17, 0, 0), ResourceId=2 },
+            new AppointmentData { Id = 3, Subject = "日本-東京", StartTime = new DateTime(2022, 2, 22, 10, 0, 0) , EndTime = new DateTime(2022, 2, 22, 12, 0, 0), ResourceId=1 },
+            new AppointmentData { Id = 4, Subject = "日本-大阪", StartTime = new DateTime(2022, 2, 22, 15, 0, 0) , EndTime = new DateTime(2022, 2, 22, 17, 0, 0), ResourceId=2 },
+            new AppointmentData { Id = 5, Subject = "日本-京都", StartTime = new DateTime(2022, 2, 22, 19, 0, 0) , EndTime = new DateTime(2022, 2, 22, 20, 0, 0), ResourceId=3 },
+            new AppointmentData { Id = 6, Subject = "義大利", StartTime = new DateTime(2022, 3, 1, 10, 0, 0) , EndTime = new DateTime(2022, 3, 1, 12, 0, 0), ResourceId=1 },
         };
 
         await Task.Yield();
@@ -110,9 +125,13 @@
     {
         DataSource = new List<AppointmentData>
         {
-            new AppointmentData { Id = 1, Subject = "紐西蘭", StartTime = new DateTime(2022, 2, 10, 10, 0, 0) , EndTime = new DateTime(2022, 2, 11, 12, 0, 0) },
-            new AppointmentData { Id = 2, Subject = "菲律賓", StartTime = new DateTime(2022, 2, 16, 10, 0, 0) , EndTime = new DateTime(2022, 2, 17, 12, 0, 0) },
-            new AppointmentData { Id = 3, Subject = "德國", StartTime = new DateTime(2022, 2, 22, 10, 0, 0) , EndTime = new DateTime(2022, 2, 23, 12, 0, 0) },
+            new AppointmentData { Id = 1, Subject = "紐西蘭-威靈頓", StartTime = new DateTime(2022, 2, 10, 10, 0, 0) , EndTime = new DateTime(2022, 2, 10, 12, 0, 0), ResourceId=1 },
+            new AppointmentData { Id = 2, Subject = "紐西蘭-奧克蘭", StartTime = new DateTime(2022, 2, 10, 15, 0, 0) , EndTime = new DateTime(2022, 2, 10, 17, 0, 0), ResourceId=2 },
+            new AppointmentData { Id = 3, Subject = "菲律賓-馬尼拉", StartTime = new DateTime(2022, 2, 16, 10, 0, 0) , EndTime = new DateTime(2022, 2, 16, 12, 0, 0), ResourceId=1 },
+            new AppointmentData { Id = 4, Subject = "菲律賓-宿霧", StartTime = new DateTime(2022, 2, 16, 15, 0, 0) , EndTime = new DateTime(2022, 2, 16, 17, 0, 0), ResourceId=2 },
+            new AppointmentData { Id = 5, Subject = "德國-柏林", StartTime = new DateTime(2022, 2, 22, 10, 0, 0) , EndTime = new DateTime(2022, 2, 22, 12, 0, 0), ResourceId=1 },
+            new AppointmentData { Id = 5, Subject = "德國-漢堡", StartTime = new DateTime(2022, 2, 22, 15, 0, 0) , EndTime = new DateTime(2022, 2, 22, 17, 0, 0), ResourceId=2 },
+            new AppointmentData { Id = 5, Subject = "德國-慕尼黑", StartTime = new DateTime(2022, 2, 22, 19, 0, 0) , EndTime = new DateTime(2022, 2, 22, 20, 0, 0), ResourceId=3 },
         };
 
         await Task.Yield();
@@ -122,9 +141,12 @@
     {
         DataSource = new List<AppointmentData>
         {
-            new AppointmentData { Id = 1, Subject = "法國", StartTime = new DateTime(2022, 2, 18, 10, 0, 0) , EndTime = new DateTime(2022, 2, 19, 12, 0, 0) },
-            new AppointmentData { Id = 2, Subject = "香港", StartTime = new DateTime(2022, 2, 24, 10, 0, 0) , EndTime = new DateTime(2022, 2, 25, 12, 0, 0) },
-            new AppointmentData { Id = 3, Subject = "英國", StartTime = new DateTime(2022, 3, 2, 10, 0, 0) , EndTime = new DateTime(2022, 3, 3, 12, 0, 0) },
+            new AppointmentData { Id = 1, Subject = "法國-巴黎", StartTime = new DateTime(2022, 2, 18, 10, 0, 0) , EndTime = new DateTime(2022, 2, 18, 12, 0, 0), ResourceId=1 },
+            new AppointmentData { Id = 2, Subject = "法國-里昂", StartTime = new DateTime(2022, 2, 18, 15, 0, 0) , EndTime = new DateTime(2022, 2, 18, 17, 0, 0), ResourceId=2 },
+            new AppointmentData { Id = 3, Subject = "法國-尼斯", StartTime = new DateTime(2022, 2, 18, 19, 0, 0) , EndTime = new DateTime(2022, 2, 18, 20, 0, 0), ResourceId=3 },
+            new AppointmentData { Id = 4, Subject = "香港-新界", StartTime = new DateTime(2022, 2, 24, 10, 0, 0) , EndTime = new DateTime(2022, 2, 24, 12, 0, 0), ResourceId=1 },
+            new AppointmentData { Id = 5, Subject = "香港-香港", StartTime = new DateTime(2022, 2, 24, 15, 0, 0) , EndTime = new DateTime(2022, 2, 24, 17, 0, 0), ResourceId=2 },
+            new AppointmentData { Id = 6, Subject = "英國-倫敦", StartTime = new DateTime(2022, 3, 2, 10, 0, 0) , EndTime = new DateTime(2022, 3, 2, 12, 0, 0), ResourceId=1 },
         };
 
         await Task.Yield();
@@ -134,10 +156,15 @@
     {
         DataSource = new List<AppointmentData>
         {
-            new AppointmentData { Id = 1, Subject = "泰國", StartTime = new DateTime(2022, 2, 15, 10, 0, 0) , EndTime = new DateTime(2022, 2, 16, 12, 0, 0) },
-            new AppointmentData { Id = 2, Subject = "比利時", StartTime = new DateTime(2022, 2, 23, 10, 0, 0) , EndTime = new DateTime(2022, 2, 24, 12, 0, 0) },
-            new AppointmentData { Id = 3, Subject = "土耳其", StartTime = new DateTime(2022, 3, 3, 10, 0, 0) , EndTime = new DateTime(2022, 3, 4, 12, 0, 0) },
-            new AppointmentData { Id = 4, Subject = "日本", StartTime = new DateTime(2022, 3, 10, 10, 0, 0) , EndTime = new DateTime(2022, 3, 11, 12, 0, 0) }
+            new AppointmentData { Id = 1, Subject = "泰國-清邁", StartTime = new DateTime(2022, 2, 15, 10, 0, 0) , EndTime = new DateTime(2022, 2, 15, 12, 0, 0), ResourceId=1 },
+            new AppointmentData { Id = 2, Subject = "泰國-曼谷", StartTime = new DateTime(2022, 2, 15, 15, 0, 0) , EndTime = new DateTime(2022, 2, 15, 17, 0, 0), ResourceId=2 },
+            new AppointmentData { Id = 3, Subject = "比利時-布魯塞爾", StartTime = new DateTime(2022, 2, 23, 10, 0, 0) , EndTime = new DateTime(2022, 2, 23, 12, 0, 0), ResourceId=1 },
+            new AppointmentData { Id = 4, Subject = "比利時-列日", StartTime = new DateTime(2022, 2, 23, 15, 0, 0) , EndTime = new DateTime(2022, 2, 23, 17, 0, 0), ResourceId=2 },
+            new AppointmentData { Id = 5, Subject = "土耳其-伊斯坦堡", StartTime = new DateTime(2022, 3, 3, 10, 0, 0) , EndTime = new DateTime(2022, 3, 3, 12, 0, 0), ResourceId=1 },
+            new AppointmentData { Id = 6, Subject = "土耳其-安卡拉", StartTime = new DateTime(2022, 3, 3, 15, 0, 0) , EndTime = new DateTime(2022, 3, 3, 17, 0, 0), ResourceId=2 },
+            new AppointmentData { Id = 7, Subject = "日本-札幌", StartTime = new DateTime(2022, 3, 10, 10, 0, 0) , EndTime = new DateTime(2022, 3, 10, 12, 0, 0), ResourceId=1 },
+            new AppointmentData { Id = 8, Subject = "日本-函館", StartTime = new DateTime(2022, 3, 10, 15, 0, 0) , EndTime = new DateTime(2022, 3, 10, 17, 0, 0), ResourceId=2 },
+            new AppointmentData { Id = 9, Subject = "日本-小樽", StartTime = new DateTime(2022, 3, 10, 19, 0, 0) , EndTime = new DateTime(2022, 3, 10, 20, 0, 0), ResourceId=3 }
         };
 
         await Task.Yield();
@@ -178,6 +205,13 @@
         await Task.Yield();
     }
 
+    public class ResourceData
+    {
+        public int PeriodId { get; set; }
+        public string PeriodText { get; set; }
+        public string PeriodColor { get; set; }
+    }
+
     public class AppointmentData
     {
         public int Id { get; set; }
@@ -190,5 +224,6 @@
         public string RecurrenceRule { get; set; }
         public string RecurrenceException { get; set; }
         public Nullable<int> RecurrenceID { get; set; }
+        public int ResourceId { get; set; }
     }
 }
