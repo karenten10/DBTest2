@@ -25,6 +25,9 @@ using xfPatrolDto.Dtos;
 using InspectionShare.Helpers;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
 
 namespace DBTest
 {
@@ -92,10 +95,27 @@ namespace DBTest
                 });
             #endregion
 
+            #region 多國語言設定
             services.AddControllers();
-
-
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.AddSyncfusionBlazor();
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                // define the list of cultures your app will support
+                var supportedCultures = new List<CultureInfo>() {
+                    new CultureInfo("en-US"),
+                    new CultureInfo("zh")
+                };
+
+                // set the default culture
+                options.DefaultRequestCulture = new RequestCulture("zh-TW");
+
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
+            services.AddSingleton(typeof(ISyncfusionStringLocalizer), typeof(SFLocalizer));
+            #endregion
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
@@ -218,6 +238,9 @@ namespace DBTest
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            #region 多國語言設定
+            app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
+            #endregion
 
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTUwNzcxQDMxMzkyZTMyMmUzMEdrSDBDTnF5aTBYbW0zMlY5QTBZQThINlRIRG42M1NvTG1LaXIyNTRPdTg9");
 

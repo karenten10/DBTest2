@@ -23,7 +23,7 @@
 <SfSchedule TValue=AppointmentData Height="650px" @bind-SelectedDate="@CurrentDate" @bind-CurrentView="@CurrentView">
     <ScheduleResources>
         <ScheduleResource TItem="ResourceData" TValue="int" DataSource="@PeriodData" 
-                          Field="ResourceId" Title="Periods" Name="ResourceName" 
+                          Field="ResourceId" Title="區間" Name="ResourceName" 
                           TextField="PeriodText" IdField="PeriodId" ColorField="PeriodColor" 
                           AllowMultiple="false"></ScheduleResource>
     </ScheduleResources>
