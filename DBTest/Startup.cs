@@ -245,7 +245,7 @@ namespace DBTest
             app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
             #endregion
 
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTUwNzcxQDMxMzkyZTMyMmUzMEdrSDBDTnF5aTBYbW0zMlY5QTBZQThINlRIRG42M1NvTG1LaXIyNTRPdTg9");
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTY5NjM2QDMxMzkyZTM0MmUzMGwvSmU1QzhGTjVJYXV2OGVnK2ZMMHlVSEdwdHdtU0hnamRDSHRzMG1IbTQ9");
 
             if (env.IsDevelopment())
             {

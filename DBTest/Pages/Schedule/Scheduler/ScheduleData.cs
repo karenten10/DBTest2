@@ -2035,7 +2035,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             roomData.Add(new RoomData
             {
                 Id = 6,
-                Subject = "Client Meeting",
+                Subject = "拜訪客戶",
                 Description = "Meeting to discuss client requirements.",
                 StartTime = new DateTime(CurrentYear, 12, 30, 10, 30, 0),
                 EndTime = new DateTime(CurrentYear, 12, 30, 13, 0, 0),
@@ -2161,7 +2161,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             roomData.Add(new RoomData
             {
                 Id = 20,
-                Subject = "Client Meeting",
+                Subject = "拜訪客戶",
                 Description = "Meeting to discuss client requirements.",
                 StartTime = new DateTime(CurrentYear, 12, 31, 10, 30, 0),
                 EndTime = new DateTime(CurrentYear, 12, 31, 13, 0, 0),
@@ -2289,7 +2289,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             roomData.Add(new RoomData
             {
                 Id = 34,
-                Subject = "Client Meeting",
+                Subject = "拜訪客戶",
                 Description = "Meeting to discuss client requirements.",
                 StartTime = new DateTime(CurrentYear, 1, 3, 10, 30, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 13, 0, 0),
@@ -2379,7 +2379,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             roomData.Add(new RoomData
             {
                 Id = 45,
-                Subject = "Client Meeting",
+                Subject = "拜訪客戶",
                 Description = "Meeting to discuss client requirements.",
                 StartTime = new DateTime(CurrentYear, 1, 3, 16, 30, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 18, 0, 0),
@@ -2433,7 +2433,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             roomData.Add(new RoomData
             {
                 Id = 51,
-                Subject = "Client Meeting",
+                Subject = "拜訪客戶",
                 Description = "Meeting to discuss client requirements.",
                 StartTime = new DateTime(CurrentYear, 1, 3, 10, 30, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 12, 0, 0),
@@ -2637,7 +2637,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             roomData.Add(new RoomData
             {
                 Id = 6,
-                Subject = "Client Meeting",
+                Subject = "拜訪客戶",
                 Description = "Meeting to discuss client requirements.",
                 StartTime = new DateTime(CurrentYear, 1, 12, 11, 30, 0),
                 EndTime = new DateTime(CurrentYear, 1, 12, 13, 0, 0),
@@ -3101,7 +3101,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 1,
-                Subject = "Not available",
+                Subject = "外出",
                 StartTime = new DateTime(CurrentYear, 1, 3, 10, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 12, 0, 0),
                 RecurrenceRule = "FREQ=DAILY;INTERVAL=1;COUNT=10",
@@ -3112,7 +3112,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 2,
-                Subject = "Not available",
+                Subject = "外出",
                 StartTime = new DateTime(CurrentYear, 1, 3, 16, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 20, 0, 0),
                 IsAllDay = false,
@@ -3122,7 +3122,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 3,
-                Subject = "Not available",
+                Subject = "外出",
                 StartTime = new DateTime(CurrentYear, 1, 3, 12, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 14, 0, 0),
                 IsAllDay = false,
@@ -3132,7 +3132,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 4,
-                Subject = "Not available",
+                Subject = "外出",
                 StartTime = new DateTime(CurrentYear, 1, 4, 11, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 5, 10, 0, 0),
                 IsAllDay = true,
@@ -3142,7 +3142,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 5,
-                Subject = "Not available",
+                Subject = "外出",
                 StartTime = new DateTime(CurrentYear, 1, 10, 11, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 12, 10, 0, 0),
                 IsAllDay = false,
@@ -3152,7 +3152,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 6,
-                Subject = "Not available",
+                Subject = "外出",
                 StartTime = new DateTime(CurrentYear, 1, 8),
                 EndTime = new DateTime(CurrentYear, 1, 11),
                 IsAllDay = false,
@@ -3162,7 +3162,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 7,
-                Subject = "Client Meeting",
+                Subject = "拜訪客戶",
                 StartTime = new DateTime(CurrentYear, 1, 3, 8, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 10, 30, 0),
                 IsAllDay = false,
@@ -3180,7 +3180,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 9,
-                Subject = "Employee Recruitment",
+                Subject = "員工招募",
                 StartTime = new DateTime(CurrentYear, 1, 3, 10, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 13, 0, 0),
                 IsAllDay = false,
@@ -3189,7 +3189,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 10,
-                Subject = "Data Analyzing",
+                Subject = "資料分析",
                 StartTime = new DateTime(CurrentYear, 1, 3, 15, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 17, 0, 0),
                 IsAllDay = false,
@@ -3207,7 +3207,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 12,
-                Subject = "Meeting",
+                Subject = "會議",
                 StartTime = new DateTime(CurrentYear, 1, 3, 9, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 11, 0, 0),
                 IsAllDay = false,
@@ -3216,7 +3216,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 13,
-                Subject = "Not available",
+                Subject = "外出",
                 StartTime = new DateTime(CurrentYear, 1, 29, 11, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 31, 10, 0, 0),
                 IsAllDay = false,
@@ -3226,7 +3226,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 14,
-                Subject = "Not available",
+                Subject = "外出",
                 StartTime = new DateTime(CurrentYear, 1, 12),
                 EndTime = new DateTime(CurrentYear, 1, 15),
                 IsAllDay = false,
