@@ -28,6 +28,7 @@ using Newtonsoft.Json;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
+using BlazorDemos.Shared;
 
 namespace DBTest
 {
@@ -225,6 +226,8 @@ namespace DBTest
             services.AddTransient<RepairEquipmentRepairRemakerService>();
             services.AddTransient<RepairMasterService>();
             services.AddTransient<StockChangeHistoryService>();
+
+            services.AddScoped<SampleService>();
             #endregion
 
             #region µù¥U Razor Model
