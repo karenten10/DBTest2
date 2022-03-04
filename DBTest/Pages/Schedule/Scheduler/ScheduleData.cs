@@ -3101,32 +3101,32 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 1,
-                Subject = "外出",
+                Subject = "主管簽核",
                 StartTime = new DateTime(CurrentYear, 1, 3, 10, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 12, 0, 0),
                 RecurrenceRule = "FREQ=DAILY;INTERVAL=1;COUNT=10",
                 IsAllDay = false,
-                IsBlock = true,
+                // IsBlock = true,
                 EmployeeId = 1
             });
             blockData.Add(new BlockData
             {
                 Id = 2,
-                Subject = "外出",
+                Subject = "主管簽核",
                 StartTime = new DateTime(CurrentYear, 1, 3, 16, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 20, 0, 0),
                 IsAllDay = false,
-                IsBlock = true,
+                // IsBlock = true,
                 EmployeeId = 2
             });
             blockData.Add(new BlockData
             {
                 Id = 3,
-                Subject = "外出",
+                Subject = "Carrier-19XRV冰水主機-F0001-CH-1",
                 StartTime = new DateTime(CurrentYear, 1, 3, 12, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 14, 0, 0),
                 IsAllDay = false,
-                IsBlock = true,
+                // IsBlock = true,
                 EmployeeId = 3
             });
             blockData.Add(new BlockData
@@ -3162,7 +3162,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 7,
-                Subject = "拜訪客戶",
+                Subject = "主管簽核",
                 StartTime = new DateTime(CurrentYear, 1, 3, 8, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 10, 30, 0),
                 IsAllDay = false,
@@ -3180,7 +3180,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 9,
-                Subject = "員工招募",
+                Subject = "CO2量測-E0034-第一門診2F-2",
                 StartTime = new DateTime(CurrentYear, 1, 3, 10, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 13, 0, 0),
                 IsAllDay = false,
@@ -3189,7 +3189,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 10,
-                Subject = "資料分析",
+                Subject = "F/C-A0604-63F/C",
                 StartTime = new DateTime(CurrentYear, 1, 3, 15, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 17, 0, 0),
                 IsAllDay = false,
@@ -3207,7 +3207,7 @@ namespace BlazorDemos.Pages.Schedule.Scheduler
             blockData.Add(new BlockData
             {
                 Id = 12,
-                Subject = "會議",
+                Subject = "CO2量測-E0033-第一門診1F-2",
                 StartTime = new DateTime(CurrentYear, 1, 3, 9, 0, 0),
                 EndTime = new DateTime(CurrentYear, 1, 3, 11, 0, 0),
                 IsAllDay = false,
